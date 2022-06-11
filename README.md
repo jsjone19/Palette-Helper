@@ -11,8 +11,6 @@ However, I've added and revamped so much in the last two weeks (in which time I 
 
 The UI is wider and shorter. You can resize it to be even smaller if you need to (I gave it extra space for an improved user experience).
 
-![image|690x357](upload://7ciXDAvzncuJFQakuDQSB5gsLY8.png)
-
 Notable functionalities that were not present in Chaonic's Palette Helper V.1.0:
 
 * Cancel (Undo) Button
