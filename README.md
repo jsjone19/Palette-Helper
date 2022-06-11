@@ -5,7 +5,7 @@ This is a script for Aseprite (see aseprite.org for more details)
 
 I'm really grateful for Chaonic's Palette Helper Extension. It has made my life easier and my art more vibrant. I was really passionate about it the first moment I saw how beautifully it could ramp colors. The original is still an amazing piece of work and Chaonic deserves massive kudos for it.
 
-At first, I was just tinkering with [Chaonic's Palette Helper](https://community.aseprite.org/t/extension-palette-helper/14429?u=j19) to better suit my own needs (It was a little too tall to display properly at the default UI scaling). 
+At first, I was just tinkering with [Chaonic's Palette Helper](https://community.aseprite.org/t/extension-palette-helper/14429?u=j19) to better suit my own needs (It was a little too tall to display properly at the default UI scaling). You can get his original version on [itch](https://chaonic.itch.io/aseprite-palette-helper) or on [github](https://github.com/ChaonicTheDeathKitten/Palette-Helper)
 
 However, I've added and revamped so much in the last two weeks (in which time I have not heard back from Chaonic) that I've written half of the lines of code in the current script. The only part that has remained unchanged from the original is the way the palette calculations are done. Therefore, I think it's safe to consider myself a co-author of the Palette Helper version that I am releasing here.
 
