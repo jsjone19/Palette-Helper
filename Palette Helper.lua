@@ -6,22 +6,22 @@ local minColors = 3
 -- YOU CAN HAVE A LARGE MAX COLORS SIZE -- 32 IS RECOMMENDED FOR BASE WINDOW
 local maxColors = 32 -- should make proportional to window bounds width
 
---LOADS IN TEMPLATE DATA -- YOU CAN CREATE YOUR OWN TEMPLATE AND ADD IT TO THE TEMPLATES FOLDER
--- Template
-local templateName = "Custom 1"
-local templateColorLeft = Color {r = 0, g = 0, b = 0, a = 255}
-local templateColorRight = Color {r = 255, g = 255, b = 255, a = 255}
-local templateAmountOfColorsVar = 15
-local templateAmountOfHuesVar = 12
-local templateAmountOfSoftHuesVar = 6
-local templateHueStrength = 100
-local templateSatStrength = 100
-local templateValStrenght = 100
-local templateAlphaStrength = 100
-local templateHueInterpolationVar = "Standard"
-local templateSatInterpolationVar = "Quad"
-local templateValInterpolationVar = "Standard"
-local templateAlphaInterpolationVar = "Quad"
+
+-- defaults
+local defaultName = "Custom 1"
+local defaultColorLeft = Color {r = 0, g = 0, b = 0, a = 255}
+local defaultColorRight = Color {r = 255, g = 255, b = 255, a = 255}
+local defaultAmountOfColorsVar = 15
+local defaultAmountOfHuesVar = 12
+local defaultAmountOfSoftHuesVar = 6
+local defaultHueStrength = 100
+local defaultSatStrength = 100
+local defaultValStrenght = 100
+local defaultAlphaStrength = 100
+local defaultHueInterpolationVar = "Standard"
+local defaultSatInterpolationVar = "Quad"
+local defaultValInterpolationVar = "Standard"
+local defaultAlphaInterpolationVar = "Quad"
 
 -- STANDARD VALUES
 local colorLeft = Color {r = 15, g = 15, b = 30, a = 255}
@@ -29,17 +29,13 @@ local colorMain = app.fgColor
 local colorRight = Color {r = 245, g = 245, b = 230, a = 255}
 local amountOfColorsVar = 15
 local hueStrength = 100
-local satStrength = 100
-local valStrenght = 100
 local alphaStrength = 100
 local alphaWeight = .1
 
 -- WINDOW DATA
-local defMainWindowWidth = 600 --initial window width
+local defMainWindowWidth = 368 --initial window width
 --local minMainWindowWidth = 357 -- ideally, clamp width so it can't go smaller (not sure how to scan for change in window size but if I find it, I will add this)
-local defMainWindowHeight = 490 --initial window height
---local minMainWindowHeight = 341 --ideally, clamp height so it can't go smaller, (not sure how to scan for change in window size but if I find it, I will add this)
-local smallMainWindowHeight = 311 -- small view window height
+local defMainWindowHeight = 339 -- small view window height
 
 local defMainWindowX = 350
 local defMainWindowY = 0
@@ -69,18 +65,12 @@ local shadeDropDownVar = shadingTypes[1]
 local shadeID = { "paletteShade", "paletteLight", "paletteValue", "paletteSaturation", "paletteSoftHue", "paletteHardHue"}
 local shadeIDVar = shadeID[1]
 
--------Templates--------------------------------
-local templateNameList = {" "}
-local templateDropDownVar = templateNameList[1]
-
 -- CHANGED VALUES
 local CL = colorLeft -- stores the color set on colorLeft
 local CM = colorMain -- stores the color set on colorMain
 local CR = colorRight -- stores the colore set on colorRight
 local AOC = amountOfColorsVar --stores the total number of colors with which to populate the Magic Shade, Light Shade, Value Shades, and Saturation Shade
 local HS = hueStrength --stores the relative strength 1 to 100 for the hue
-local SS = satStrength --stores the relative strength 1 to 100 for the saturation
-local VS = valStrenght --stores the relative strength 1 to 100 for the value
 local AS = alphaStrength --stores the relative strength 1 to 100 for the alpha
 local HI = hueInterpolationVar --stores the type of interpolation to be done on the hue
 local SI = satInterpolationVar --stores the type of interpolation to be done on the saturation
@@ -88,7 +78,6 @@ local VI = valInterpolationVar --stores the type of interpolation to be done on 
 local AI = alphaInterpolationVar --stores the type of interpolation to be done on the alpha
 local CT = calcTable --prepares colors to apply the interpolations to
 --------------------------
-local TD = templateDropDownVar -- used to display the template option
 
 local SDI = shadeIDVar -- used by small tab to update calculation of the shade
 local SL = shadeDropDownVar -- label text for the shade (also present in the combo box)
@@ -103,9 +92,8 @@ local rightSelectionStateVar = inclusionSelectionStates[1]
 
 --HOW MUCH SPACING TO ADD TO THE VARIOUS LABELS
 --every space is 4 pixels wide.
-local strengthLabelOffset = {11, 8, 8, 10}
-local colorLabelOffset = {20, 18, 19}
-local amountOfLabelOffset = {18, 21, 20}
+local strengthLabelOffset = {2, 0, 0, 0}
+local colorLabelOffset = {10, 9, 10}
 
 --DLG FIRST INSTANCE?
 local dlgFirstInstance = true
@@ -313,43 +301,43 @@ local function paletteShadeCalc()
         end
 
         if SI == "Linear" then
-            tempColor.saturation = linear(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = linear(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "Sine" then
-            tempColor.saturation = inSine(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = inSine(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "Quad" then
-            tempColor.saturation = inQuad(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = inQuad(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "Cubic" then
-            tempColor.saturation = inCubic(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = inCubic(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "Circ" then
-            tempColor.saturation = inCirc(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = inCirc(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "outSine" then
-            tempColor.saturation = outSine(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = outSine(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "outQuad" then
-            tempColor.saturation = outQuad(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = outQuad(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "outCubic" then
-            tempColor.saturation = outCubic(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = outCubic(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         elseif SI == "outCirc" then
-            tempColor.saturation = outCirc(CT[i] * (SS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
+            tempColor.saturation = outCirc(CT[i] * (HS / 100), CM.saturation, CL.saturation - CM.saturation, 1)
         end
 
         if VI == "Linear" then
-            tempColor.value = linear(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = linear(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "Sine" then
-            tempColor.value = inSine(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = inSine(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "Quad" then
-            tempColor.value = inQuad(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = inQuad(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "Cubic" then
-            tempColor.value = inCubic(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = inCubic(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "Circ" then
-            tempColor.value = inCirc(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = inCirc(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "outSine" then
-            tempColor.value = outSine(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = outSine(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "outQuad" then
-            tempColor.value = outQuad(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = outQuad(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "outCubic" then
-            tempColor.value = outCubic(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = outCubic(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         elseif VI == "outCirc" then
-            tempColor.value = outCirc(CT[i] * (VS / 100), CM.value, CL.value - CM.value, 1)
+            tempColor.value = outCirc(CT[i] * (HS / 100), CM.value, CL.value - CM.value, 1)
         end
 
         if AI == "Linear" then
@@ -421,51 +409,51 @@ local function paletteShadeCalc()
 
         if SI == "Linear" then
             tempColor.saturation =
-                linear(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                linear(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "Sine" then
             tempColor.saturation =
-                inSine(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                inSine(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "Quad" then
             tempColor.saturation =
-                inQuad(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                inQuad(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "Cubic" then
             tempColor.saturation =
-                inCubic(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                inCubic(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "Circ" then
             tempColor.saturation =
-                inCirc(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                inCirc(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "outSine" then
             tempColor.saturation =
-                outSine(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                outSine(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "outQuad" then
             tempColor.saturation =
-                outQuad(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                outQuad(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "outCubic" then
             tempColor.saturation =
-                outCubic(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                outCubic(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         elseif SI == "outCirc" then
             tempColor.saturation =
-                outCirc(CT[y + secondRound] * (SS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
+                outCirc(CT[y + secondRound] * (HS / 100), CM.saturation, CR.saturation - CM.saturation, 1)
         end
 
         if VI == "Linear" then
-            tempColor.value = linear(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = linear(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "Sine" then
-            tempColor.value = inSine(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = inSine(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "Quad" then
-            tempColor.value = inQuad(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = inQuad(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "Cubic" then
-            tempColor.value = inCubic(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = inCubic(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "Circ" then
-            tempColor.value = inCirc(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = inCirc(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "outSine" then
-            tempColor.value = outSine(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = outSine(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "outQuad" then
-            tempColor.value = outQuad(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = outQuad(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "outCubic" then
-            tempColor.value = outCubic(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = outCubic(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         elseif VI == "outCirc" then
-            tempColor.value = outCirc(CT[y + secondRound] * (VS / 100), CM.value, CR.value - CM.value, 1)
+            tempColor.value = outCirc(CT[y + secondRound] * (HS / 100), CM.value, CR.value - CM.value, 1)
         end
 
         if AI == "Linear" then
@@ -525,25 +513,25 @@ local function paletteLightCalc()
         tempColor.alpha = CM.alpha
 
         if VI == "Standard" then
-            tempColor.lightness = linear(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = linear(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "Linear" then
-            tempColor.lightness = linear(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = linear(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "Sine" then
-            tempColor.lightness = inSine(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = inSine(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "Quad" then
-            tempColor.lightness = inQuad(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = inQuad(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "Cubic" then
-            tempColor.lightness = inCubic(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = inCubic(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "Circ" then
-            tempColor.lightness = inCirc(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = inCirc(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "outSine" then
-            tempColor.lightness = outSine(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = outSine(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "outQuad" then
-            tempColor.lightness = outQuad(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = outQuad(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "outCubic" then
-            tempColor.lightness = outCubic(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = outCubic(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         elseif VI == "outCirc" then
-            tempColor.lightness = outCirc(CT[i] * (VS / 100), CM.lightness, 0 - CM.lightness, 1)
+            tempColor.lightness = outCirc(CT[i] * (HS / 100), CM.lightness, 0 - CM.lightness, 1)
         end
 
         table.insert(paletteLight, tempColor)
@@ -562,25 +550,25 @@ local function paletteLightCalc()
         tempColor.alpha = CM.alpha
 
         if VI == "Standard" then
-            tempColor.lightness = linear(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = linear(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "Linear" then
-            tempColor.lightness = linear(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = linear(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "Sine" then
-            tempColor.lightness = inSine(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = inSine(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "Quad" then
-            tempColor.lightness = inQuad(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = inQuad(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "Cubic" then
-            tempColor.lightness = inCubic(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = inCubic(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "Circ" then
-            tempColor.lightness = inCirc(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = inCirc(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "outSine" then
-            tempColor.lightness = outSine(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = outSine(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "outQuad" then
-            tempColor.lightness = outQuad(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = outQuad(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "outCubic" then
-            tempColor.lightness = outCubic(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = outCubic(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         elseif VI == "outCirc" then
-            tempColor.lightness = outCirc(CT[y + secondRound] * (VS / 100), CM.lightness, 1 - CM.lightness, 1)
+            tempColor.lightness = outCirc(CT[y + secondRound] * (HS / 100), CM.lightness, 1 - CM.lightness, 1)
         end
 
         table.insert(paletteLight, tempColor)
@@ -614,25 +602,25 @@ local function paletteValueCalc()
         tempColor.alpha = CM.alpha
 
         if VI == "Standard" then
-            tempColor.value = linear(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = linear(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "Linear" then
-            tempColor.value = linear(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = linear(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "Sine" then
-            tempColor.value = inSine(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = inSine(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "Quad" then
-            tempColor.value = inQuad(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = inQuad(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "Cubic" then
-            tempColor.value = inCubic(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = inCubic(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "Circ" then
-            tempColor.value = inCirc(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = inCirc(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "outSine" then
-            tempColor.value = outSine(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = outSine(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "outQuad" then
-            tempColor.value = outQuad(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = outQuad(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "outCubic" then
-            tempColor.value = outCubic(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = outCubic(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         elseif VI == "outCirc" then
-            tempColor.value = outCirc(CT[i] * (VS / 100), CM.value, 0 - CM.value, 1)
+            tempColor.value = outCirc(CT[i] * (HS / 100), CM.value, 0 - CM.value, 1)
         end
 
         table.insert(paletteValue, tempColor)
@@ -651,25 +639,25 @@ local function paletteValueCalc()
         tempColor.alpha = CM.alpha
 
         if VI == "Standard" then
-            tempColor.value = linear(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = linear(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "Linear" then
-            tempColor.value = linear(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = linear(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "Sine" then
-            tempColor.value = inSine(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = inSine(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "Quad" then
-            tempColor.value = inQuad(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = inQuad(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "Cubic" then
-            tempColor.value = inCubic(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = inCubic(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "Circ" then
-            tempColor.value = inCirc(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = inCirc(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "outSine" then
-            tempColor.value = outSine(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = outSine(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "outQuad" then
-            tempColor.value = outQuad(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = outQuad(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "outCubic" then
-            tempColor.value = outCubic(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = outCubic(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         elseif VI == "outCirc" then
-            tempColor.value = outCirc(CT[y + secondRound] * (VS / 100), CM.value, 1 - CM.value, 1)
+            tempColor.value = outCirc(CT[y + secondRound] * (HS / 100), CM.value, 1 - CM.value, 1)
         end
 
         table.insert(paletteValue, tempColor)
@@ -702,25 +690,25 @@ local function paletteSaturationCalc()
         tempColor.blue = CM.blue
         tempColor.alpha = CM.alpha
         if SI == "Standard" then
-            tempColor.saturation = linear(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = linear(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "Linear" then
-            tempColor.saturation = linear(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = linear(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "Sine" then
-            tempColor.saturation = inSine(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = inSine(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "Quad" then
-            tempColor.saturation = inQuad(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = inQuad(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "Cubic" then
-            tempColor.saturation = inCubic(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = inCubic(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "Circ" then
-            tempColor.saturation = inCirc(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = inCirc(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "outSine" then
-            tempColor.saturation = outSine(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = outSine(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "outQuad" then
-            tempColor.saturation = outQuad(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = outQuad(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "outCubic" then
-            tempColor.saturation = outCubic(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = outCubic(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         elseif SI == "outCirc" then
-            tempColor.saturation = outCirc(CT[i] * (SS / 100), CM.saturation, 1 - CM.saturation, 1)
+            tempColor.saturation = outCirc(CT[i] * (HS / 100), CM.saturation, 1 - CM.saturation, 1)
         end
 
         table.insert(paletteSaturation, tempColor)
@@ -739,25 +727,25 @@ local function paletteSaturationCalc()
         tempColor.alpha = CM.alpha
 
         if SI == "Standard" then
-            tempColor.saturation = linear(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = linear(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "Linear" then
-            tempColor.saturation = linear(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = linear(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "Sine" then
-            tempColor.saturation = inSine(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = inSine(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "Quad" then
-            tempColor.saturation = inQuad(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = inQuad(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "Cubic" then
-            tempColor.saturation = inCubic(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = inCubic(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "Circ" then
-            tempColor.saturation = inCirc(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = inCirc(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "outSine" then
-            tempColor.saturation = outSine(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = outSine(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "outQuad" then
-            tempColor.saturation = outQuad(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = outQuad(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "outCubic" then
-            tempColor.saturation = outCubic(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = outCubic(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         elseif SI == "outCirc" then
-            tempColor.saturation = outCirc(CT[y + secondRound] * (SS / 100), CM.saturation, 0 - CM.saturation, 1)
+            tempColor.saturation = outCirc(CT[y + secondRound] * (HS / 100), CM.saturation, 0 - CM.saturation, 1)
         end
 
         table.insert(paletteSaturation, tempColor)
@@ -887,10 +875,6 @@ local function paletteSoftHueCalc()
     return paletteSoftHue
 end
 
-local function templateLoader(templateLoaderBounds)
-    --if the user has pressed the templates button this window will appear
-end
-
 -- Create the shade color group for the small tab
 local function makeShadeGroup()
 	--if SDI is blah, then do blah calc
@@ -910,60 +894,13 @@ local function makeShadeGroup()
 		end
 end
 
-function getDistance(firstColor,secondColor)
-    -- define a metric for a distance between two colors
-    -- return the computed distance
-    
-    local firstRedVal = app.pixelColor.rgbaR(firstColor)
-    local firstGreenVal = app.pixelColor.rgbaG(firstColor)
-    local firstBlueVal = app.pixelColor.rgbaB(firstColor)
-    local firstAlphaVal = app.pixelColor.rgbaA(firstColor)
-
-    local secondRedVal = app.pixelColor.rgbaR(secondColor)
-    local secondGreenVal = app.pixelColor.rgbaG(secondColor)
-    local secondBlueVal = app.pixelColor.rgbaB(secondColor)
-    local secondAlphaVal = app.pixelColor.rgbaA(secondColor)
-
-    --I will start with the simplest color metric possible -- may add a more complicated variation later
-
-    local redDist = firstRedVal - secondRedVal
-    local greenDist = firstGreenVal - secondGreenVal
-    local blueDist = firstBlueVal - secondBlueVal
-
-    --alpha dist should not count for as much as the others so I include an alphaWeight (defined in the beginning of the script)
-    local alphaDist = firstAlphaVal - secondAlphaVal
-
-    local result = redDist*redDist + greenDist*greenDist + blueDist*blueDist + alphaWeight*alphaDist*alphaDist
-
-    return result
-end
 
 function findNearestColorInPalette(CM)
-    local nearestValIDX = 0
-    local minDistance
-
-    -- iterate through the colors in the palette and get their distance from the main color
-    -- keep track of the minimum distance and the corresponding palette index
-    local currentPalette = app.activeSprite.palettes[1]
-
-    for i=0, #currentPalette-1  do
-        local secondColor = currentPalette:getColor(i)
-        local currentDistance = getDistance(CM, secondColor)
-
-        if (not minDistance == nil) and currentDistance < minDistance then
-            minDistance = currentDistance
-            nearestValIDX = i
-        elseif minDistance == nil then
-            minDistance = currentDistance
-            nearestValIDX = i
-        end
-    end
-
+    local nearestValIDX = CM.index
     -- use the PaletteEditor command to select the nearest color in the palette window
     app.command.ChangeColor{target = nearestValIDX}
     --set the foreground color to the CM again so that the user doesn't have their fg change
     app.fgColor = CM
-
 end
 
 -- RELOAD COLORS
@@ -985,14 +922,9 @@ local function reloadColors(windowBounds)
     colorLabelSpacing2 = createSpacing(colorLabelOffset[2])
     colorLabelSpacing3 = createSpacing(colorLabelOffset[3])
 
-    amountOfLabelSpacing1 = createSpacing(amountOfLabelOffset[1])
-    amountOfLabelSpacing2 = createSpacing(amountOfLabelOffset[2])
-    amountOfLabelSpacing3 = createSpacing(amountOfLabelOffset[3])
-
     paletteHue = paletteHueCalc()
     -- DIALOG
 
-    dlg:button {text = "&Templates", focus = false, onclick = loadTemplateWindow}
     dlg:button {text = "&HELP", focus = false, onclick = helpMe}
     dlg:button {text = "&About", focus = false, onclick = aboutThis}
     dlg:separator {
@@ -1020,7 +952,7 @@ local function reloadColors(windowBounds)
         text = "Set",
         onclick = function()
             CL = app.fgColor
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
             dlg:modify{
                 id = "mainColors",
                 colors = {CL,CM,CR}
@@ -1031,7 +963,7 @@ local function reloadColors(windowBounds)
         text = "Set",
         onclick = function()
             CM = app.fgColor
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
             dlg:modify{
                 id = "mainColors",
                 colors = {CL,CM,CR}
@@ -1042,7 +974,7 @@ local function reloadColors(windowBounds)
         text = "Set",
         onclick = function()
             CR = app.fgColor
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
             dlg:modify{
                 id = "mainColors",
                 colors = {CL,CM,CR}
@@ -1061,7 +993,7 @@ local function reloadColors(windowBounds)
             else 
                 leftSelectionStateVar = inclusionSelectionStates[2]
             end
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
         end
     }:button{
         id = "findNearestColorButton",
@@ -1078,7 +1010,7 @@ local function reloadColors(windowBounds)
             else 
                 rightSelectionStateVar = inclusionSelectionStates[2]
             end
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
         end
     }
 
@@ -1086,19 +1018,6 @@ local function reloadColors(windowBounds)
     :separator {
         id = "separator",
         text = "Color Control"
-    }:slider {
-        id = "amountOfColorsSlider",
-        label = "Amount of Colors: ",
-        min = minColors,
-        max = maxColors,
-        value = AOC,
-        onchange = function()
-            AOC = dlg.data.amountOfColorsSlider
-        end,
-        onrelease = function()
-            AOC = dlg.data.amountOfColorsSlider
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
     }:label {
         id = "huelabel",
         text = strengthLabelSpacing1 .. "Hue/Color"
@@ -1111,6 +1030,52 @@ local function reloadColors(windowBounds)
     }:label {
         id = "alphalabel",
         text = strengthLabelSpacing4 .. "Alpha"
+    }:combobox {
+        id = "hueInterpolation",
+        label = "Interpolations: ",
+        option = HI,
+        options = interpolationTypes,
+        onchange = function()
+            HI = dlg.data.hueInterpolation
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
+        end
+    }:combobox {
+        id = "satInterpolation",
+        option = SI,
+        options = interpolationTypes,
+        onchange = function()
+            SI = dlg.data.satInterpolation
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
+        end
+    }:combobox {
+        id = "valInterpolation",
+        option = VI,
+        options = interpolationTypes,
+        onchange = function()
+            VI = dlg.data.valInterpolation
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
+        end
+    }:combobox {
+        id = "alphaInterpolation",
+        option = AI,
+        options = interpolationTypes,
+        onchange = function()
+            AI = dlg.data.alphaInterpolation
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
+        end
+    }:slider {
+        id = "amountOfColorsSlider",
+        label = "Amount of Colors: ",
+        min = minColors,
+        max = maxColors,
+        value = AOC,
+        onchange = function()
+            AOC = dlg.data.amountOfColorsSlider
+        end,
+        onrelease = function()
+            AOC = dlg.data.amountOfColorsSlider
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
+        end
     }:slider {
         id = "hueStrengthSlider",
         label = "Variance: ",
@@ -1122,34 +1087,12 @@ local function reloadColors(windowBounds)
         end,
         onrelease = function()
             HS = dlg.data.hueStrengthSlider
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
         end
-    }:slider {
-        id = "satStrengthSlider",
-        min = 0,
-        max = 100,
-        value = SS,
-        onchange = function()
-            SS = dlg.data.satStrengthSlider
-        end,
-        onrelease = function()
-            SS = dlg.data.satStrengthSlider
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:slider {
-        id = "valStrengthSlider",
-        min = 0,
-        max = 100,
-        value = VS,
-        onchange = function()
-            VS = dlg.data.valStrengthSlider
-        end,
-        onrelease = function()
-            VS = dlg.data.valStrengthSlider
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:slider {
+    }:newrow()
+    :slider {
         id = "alphaStrengthSlider",
+        label = "Magic Shade Alpha: ",
         min = 0,
         max = 100,
         value = AS,
@@ -1158,45 +1101,9 @@ local function reloadColors(windowBounds)
         end,
         onrelease = function()
             AS = dlg.data.alphaStrengthSlider
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
         end
-    }:
-    combobox {
-        id = "hueInterpolation",
-        label = "Interpolations: ",
-        option = HI,
-        options = interpolationTypes,
-        onchange = function()
-            HI = dlg.data.hueInterpolation
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:combobox {
-        id = "satInterpolation",
-        option = SI,
-        options = interpolationTypes,
-        onchange = function()
-            SI = dlg.data.satInterpolation
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:combobox {
-        id = "valInterpolation",
-        option = VI,
-        options = interpolationTypes,
-        onchange = function()
-            VI = dlg.data.valInterpolation
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:combobox {
-        id = "alphaInterpolation",
-        option = AI,
-        options = interpolationTypes,
-        onchange = function()
-            AI = dlg.data.alphaInterpolation
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:
-
-    separator {
+    }:separator {
         id = "separator",
         text = "Shades"
     }:-- SHADE
@@ -1212,7 +1119,7 @@ local function reloadColors(windowBounds)
                     SDI = shadeID[i]
                 end
             end
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+            updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
         end
 
     }:shades {
@@ -1346,7 +1253,8 @@ local function reloadColors(windowBounds)
                 paletteShadeCalc()
             end
         end
-    }:button {
+    }:newrow()
+    :button {
         id = "buttonCancel",
         text = "Cancel",
         onclick = undoEverything
@@ -1380,8 +1288,6 @@ function updateVarsOnClose()
     CR = colorRight
     AOC = amountOfColorsVar
     HS = hueStrength
-    SS = satStrength
-    VS = valStrenght
     AS = alphaStrength
     HI = hueInterpolationVar
     SI = satInterpolationVar
@@ -1414,7 +1320,7 @@ function helpMe()
     print("--------------------------------------------------------------------------------\n")
     print("Q: What am I supposed to do with the 'Amount of Colors' and 'Variance' sliders? What is the interpolation?\n")
     print("A: 'Amount of Colors' does what its name suggests. Change it and you will see that the number of colors on the shade preview goes up.\n")
-    print(" 'Variance' is a metric that changes how the interpolations do their calculations. The higher the number, the more the resultant shade will vary in that property.\n")
+    print(" 'Variance' is a metric that changes how the interpolations do their calculations. The higher the number, the more the resultant shade will vary.\n")
     print(" An interpolation is a means of constructing a function from data points in order to find new points in between the old points.\n")
     print("There are several kinds of interpolations. You're welcome to play around with them.\n")
     print("--------------------------------------------------------------------------------\n")
@@ -1426,27 +1332,7 @@ function helpMe()
     print(" There may come a point in time where 'Light', 'Value', and 'Saturation' alternate in hue as well... but for now, it is the way it is. *Shrug*\n")
 end
 
-function loadTemplateWindow()
-    local templateDLG = Dialog("Templates")
-    templateLoaderBounds = Rectangle(0, 0, 300, 50)
-    templateDLG:combobox {
-        id = "templateBox",
-        option = TD,
-        options = templateList,
-        onclick = function()
-            TD = dlg.data.templateBox
-            updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
-        end
-    }:label{
-        id = "comingSoonLabel",
-        text = "Templates Coming Soon!"
-    }:show {
-        wait = false,
-        bounds = templateLoaderBounds
-    }
-end
-
-function updatePanel(dlg,SDI,AOC,HS,SS,VS,AS,HI,SI,VI,AI)
+function updatePanel(dlg,SDI,AOC,HS,AS,HI,SI,VI,AI)
 
     generateCalcTable()
     generateColorTable()
@@ -1469,6 +1355,6 @@ end
 
 do
         CM = app.fgColor
-        windowBounds = Rectangle(defMainWindowX, defMainWindowY, defMainWindowWidth, smallMainWindowHeight)
+        windowBounds = Rectangle(defMainWindowX, defMainWindowY, defMainWindowWidth, defMainWindowHeight)
         reloadColors(windowBounds)
 end
